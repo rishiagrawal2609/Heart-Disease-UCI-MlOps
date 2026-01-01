@@ -2,11 +2,12 @@
 Unit tests for API endpoints
 """
 
+import os
+import sys
+
+import numpy as np
 import pytest
 from fastapi.testclient import TestClient
-import sys
-import os
-import numpy as np
 from sklearn.linear_model import LogisticRegression
 
 # Add src to path

@@ -3,11 +3,12 @@ Standalone prediction script
 Useful for testing predictions without starting the API server
 """
 
-import sys
 import os
-import numpy as np
-import mlflow.sklearn
+import sys
 from pathlib import Path
+
+import mlflow.sklearn
+import numpy as np
 
 # Add src to path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))

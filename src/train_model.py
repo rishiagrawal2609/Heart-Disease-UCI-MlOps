@@ -3,31 +3,32 @@ Model Training Script
 Trains Logistic Regression and Random Forest models with MLflow tracking
 """
 
+import os
+import sys
+from pathlib import Path
+
+import matplotlib.pyplot as plt
 import mlflow
 import mlflow.sklearn
-import pandas as pd
 import numpy as np
-from sklearn.linear_model import LogisticRegression
+import pandas as pd
+import seaborn as sns
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import cross_val_score, StratifiedKFold
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
     accuracy_score,
+    classification_report,
+    confusion_matrix,
     precision_score,
     recall_score,
     roc_auc_score,
-    confusion_matrix,
-    classification_report,
 )
-import matplotlib.pyplot as plt
-import seaborn as sns
-from pathlib import Path
-import sys
-import os
+from sklearn.model_selection import StratifiedKFold, cross_val_score
 
 # Add src to path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from data_preprocessing import load_and_preprocess_data, HeartDiseasePreprocessor
+from data_preprocessing import HeartDiseasePreprocessor, load_and_preprocess_data
 
 
 def evaluate_model(model, X_train, X_test, y_train, y_test, model_name):

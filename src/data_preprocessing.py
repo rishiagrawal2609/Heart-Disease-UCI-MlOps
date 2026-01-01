@@ -3,12 +3,13 @@ Data Preprocessing Pipeline
 Handles missing values, encoding, and feature scaling
 """
 
-import pandas as pd
-import numpy as np
-from sklearn.preprocessing import StandardScaler
-from sklearn.impute import SimpleImputer
 import pickle
 from pathlib import Path
+
+import numpy as np
+import pandas as pd
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import StandardScaler
 
 
 class HeartDiseasePreprocessor:

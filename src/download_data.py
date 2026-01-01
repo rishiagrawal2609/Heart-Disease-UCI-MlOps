@@ -5,8 +5,9 @@ Downloads the Heart Disease UCI dataset from UCI Machine Learning Repository
 
 import os
 import urllib.request
-import pandas as pd
 from pathlib import Path
+
+import pandas as pd
 
 
 def download_heart_disease_dataset(data_dir="data"):

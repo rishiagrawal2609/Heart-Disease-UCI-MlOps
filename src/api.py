@@ -3,16 +3,17 @@ FastAPI Service for Heart Disease Prediction
 Exposes /predict endpoint with logging and monitoring
 """
 
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, Field
+import logging
+import os
+import sys
+from datetime import datetime
+from pathlib import Path
 from typing import List
+
 import mlflow.sklearn
 import numpy as np
-import logging
-from datetime import datetime
-import os
-from pathlib import Path
-import sys
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel, Field
 
 # Add src to path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
