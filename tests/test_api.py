@@ -1,6 +1,7 @@
 """
 Unit tests for API endpoints
 """
+
 import pytest
 from fastapi.testclient import TestClient
 import sys
@@ -9,7 +10,7 @@ import numpy as np
 from sklearn.linear_model import LogisticRegression
 
 # Add src to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 # Create a simple mock model before importing api
 mock_model = LogisticRegression(max_iter=1000, random_state=42)
@@ -17,12 +18,14 @@ mock_model.fit(np.random.randn(10, 13), np.random.randint(0, 2, 10))
 
 # Import and mock the model
 from src import api as api_module
+
 api_module.model = mock_model
 api_module.preprocessor = None
 
 from src.api import app
 
 client = TestClient(app)
+
 
 def test_root_endpoint():
     """Test root endpoint"""
@@ -32,6 +35,7 @@ def test_root_endpoint():
     assert data["status"] == "healthy"
     assert "service" in data
 
+
 def test_health_endpoint():
     """Test health endpoint"""
     response = client.get("/health")
@@ -39,6 +43,7 @@ def test_health_endpoint():
     data = response.json()
     assert data["status"] == "healthy"
     assert "model_loaded" in data
+
 
 def test_predict_endpoint():
     """Test predict endpoint"""
@@ -55,9 +60,9 @@ def test_predict_endpoint():
         "oldpeak": 2.3,
         "slope": 0,
         "ca": 0,
-        "thal": 1
+        "thal": 1,
     }
-    
+
     response = client.post("/predict", json=input_data)
     assert response.status_code == 200
     data = response.json()
@@ -67,6 +72,7 @@ def test_predict_endpoint():
     assert "timestamp" in data
     assert data["prediction"] in [0, 1]
     assert 0 <= data["probability"] <= 1
+
 
 def test_predict_endpoint_invalid_input():
     """Test predict endpoint with invalid input"""
@@ -83,11 +89,12 @@ def test_predict_endpoint_invalid_input():
         "oldpeak": 2.3,
         "slope": 0,
         "ca": 0,
-        "thal": 1
+        "thal": 1,
     }
-    
+
     response = client.post("/predict", json=invalid_data)
     assert response.status_code == 422  # Validation error
+
 
 def test_metrics_endpoint():
     """Test metrics endpoint"""
@@ -95,4 +102,3 @@ def test_metrics_endpoint():
     assert response.status_code == 200
     data = response.json()
     assert "model_version" in data
-

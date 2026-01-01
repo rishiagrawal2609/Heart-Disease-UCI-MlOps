@@ -2,7 +2,7 @@
 
 End-to-end machine learning solution for predicting heart disease risk using modern MLOps practices.
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Overview](#overview)
 - [Project Structure](#project-structure)
@@ -14,7 +14,7 @@ End-to-end machine learning solution for predicting heart disease risk using mod
 - [Monitoring](#monitoring)
 - [CI/CD Pipeline](#cicd-pipeline)
 
-## 🎯 Overview
+## Overview
 
 This project implements a complete MLOps pipeline for heart disease prediction, including:
 
@@ -27,7 +27,7 @@ This project implements a complete MLOps pipeline for heart disease prediction, 
 - **Production Deployment**: Kubernetes manifests and Helm charts
 - **Monitoring**: Prometheus and Grafana integration
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 assignment-1/
@@ -58,7 +58,7 @@ assignment-1/
 └── requirements.txt        # Python dependencies
 ```
 
-## 🚀 Setup Instructions
+## Setup Instructions
 
 ### Prerequisites
 
@@ -101,7 +101,7 @@ assignment-1/
    python src/train_model.py
    ```
 
-## 💻 Usage
+## Usage
 
 ### Local Development
 
@@ -182,7 +182,7 @@ pytest tests/ -v --cov=src --cov-report=html
    kubectl get ingress
    ```
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 ┌─────────────────┐
@@ -229,7 +229,7 @@ pytest tests/ -v --cov=src --cov-report=html
          └──────────────────┘
 ```
 
-## 🔧 Components
+## Components
 
 ### 1. Data Acquisition
 - Automated download from UCI ML Repository
@@ -273,7 +273,7 @@ pytest tests/ -v --cov=src --cov-report=html
 - API request logging
 - Health check monitoring
 
-## 📊 Model Performance
+## Model Performance
 
 Models are evaluated using:
 - **Accuracy**: Overall correctness
@@ -286,7 +286,7 @@ Results are tracked in MLflow and can be viewed using:
 mlflow ui
 ```
 
-## 🔍 Monitoring
+## Monitoring
 
 ### Prometheus
 - Scrapes metrics from API endpoint
@@ -297,7 +297,7 @@ mlflow ui
 - Accessible at `http://localhost:3000`
 - Default credentials: admin/admin
 
-## 🧪 CI/CD Pipeline
+## CI/CD Pipeline
 
 The GitHub Actions workflow includes:
 
@@ -310,7 +310,7 @@ Workflow triggers on:
 - Push to `main` or `develop` branches
 - Pull requests to `main` branch
 
-## 📝 API Documentation
+## API Documentation
 
 Once the API is running, visit:
 - Swagger UI: `http://localhost:8000/docs`
@@ -354,7 +354,7 @@ Once the API is running, visit:
 }
 ```
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### Model not loading
 - Ensure `mlruns/` directory contains trained models
@@ -371,18 +371,17 @@ Once the API is running, visit:
 - Verify service endpoints: `kubectl get endpoints`
 - Check ingress configuration
 
-## 📄 License
+## License
 
 This project is part of an academic assignment.
 
-## 👥 Authors
+## Authors
 
 MLOps Assignment - S1-25_AIMLCZG523
 
-## 🔗 Links
+## Links
 
 - [UCI Heart Disease Dataset](https://archive.ics.uci.edu/ml/datasets/heart+disease)
 - [MLflow Documentation](https://mlflow.org/docs/latest/index.html)
 - [FastAPI Documentation](https://fastapi.tiangolo.com/)
 - [Kubernetes Documentation](https://kubernetes.io/docs/)
-
