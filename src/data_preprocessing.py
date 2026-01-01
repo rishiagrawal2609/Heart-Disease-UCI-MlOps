@@ -92,10 +92,26 @@ def load_and_preprocess_data(
     X = df.drop("target", axis=1)
     y = df["target"]
 
-    # Split data
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=test_size, random_state=random_state, stratify=y
+    # Check if we can use stratified split (need at least 2 samples per class)
+    # in each split
+    min_samples_per_class = min(y.value_counts())
+    min_test_samples = int(len(df) * test_size)
+    min_train_samples = len(df) - min_test_samples
+
+    # Use stratify only if we have enough samples in each class for both splits
+    use_stratify = (
+        min_samples_per_class >= 2 and min_test_samples >= 2 and min_train_samples >= 2
     )
+
+    # Split data
+    split_kwargs = {
+        "test_size": test_size,
+        "random_state": random_state,
+    }
+    if use_stratify:
+        split_kwargs["stratify"] = y
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, **split_kwargs)
 
     # Fit preprocessor on training data
     preprocessor = HeartDiseasePreprocessor()

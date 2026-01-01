@@ -71,22 +71,23 @@ def test_preprocessor_save_load(tmp_path):
 
 def test_load_and_preprocess_data(tmp_path):
     """Test data loading and preprocessing"""
-    # Create sample dataset
+    # Create sample dataset with enough samples for stratified split
+    # Need at least 2 samples per class in each split
     data = {
-        "age": [63, 37, 41],
-        "sex": [1, 1, 0],
-        "cp": [3, 2, 1],
-        "trestbps": [145, 130, 130],
-        "chol": [233, 250, 204],
-        "fbs": [1, 0, 0],
-        "restecg": [0, 1, 0],
-        "thalach": [150, 187, 172],
-        "exang": [0, 0, 0],
-        "oldpeak": [2.3, 3.5, 1.4],
-        "slope": [0, 0, 2],
-        "ca": [0, 0, 0],
-        "thal": [1, 3, 3],
-        "target": [1, 0, 0],
+        "age": [63, 37, 41, 56, 45, 50, 60, 35],
+        "sex": [1, 1, 0, 1, 0, 1, 0, 1],
+        "cp": [3, 2, 1, 3, 2, 1, 0, 2],
+        "trestbps": [145, 130, 130, 140, 120, 135, 150, 125],
+        "chol": [233, 250, 204, 220, 200, 240, 260, 210],
+        "fbs": [1, 0, 0, 1, 0, 0, 1, 0],
+        "restecg": [0, 1, 0, 0, 1, 0, 1, 0],
+        "thalach": [150, 187, 172, 160, 180, 170, 155, 175],
+        "exang": [0, 0, 0, 1, 0, 0, 1, 0],
+        "oldpeak": [2.3, 3.5, 1.4, 2.0, 1.0, 1.5, 3.0, 1.2],
+        "slope": [0, 0, 2, 1, 2, 1, 0, 2],
+        "ca": [0, 0, 0, 1, 0, 0, 2, 0],
+        "thal": [1, 3, 3, 2, 3, 2, 1, 3],
+        "target": [1, 0, 0, 1, 0, 1, 0, 0],  # 4 class 0, 4 class 1
     }
     df = pd.DataFrame(data)
 
@@ -96,7 +97,7 @@ def test_load_and_preprocess_data(tmp_path):
 
     # Load and preprocess
     X_train, X_test, y_train, y_test, preprocessor = load_and_preprocess_data(
-        str(data_path), test_size=0.33, random_state=42
+        str(data_path), test_size=0.25, random_state=42
     )
 
     assert X_train.shape[0] + X_test.shape[0] == len(df)

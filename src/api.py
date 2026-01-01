@@ -199,7 +199,7 @@ async def predict(input_data: HeartDiseaseInput):
     """
     try:
         # Log request
-        logger.info(f"Prediction request received: {input_data.dict()}")
+        logger.info(f"Prediction request received: {input_data.model_dump()}")
 
         # Convert input to array
         features = np.array(
