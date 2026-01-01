@@ -299,16 +299,91 @@ mlflow ui
 
 ## CI/CD Pipeline
 
-The GitHub Actions workflow includes:
+The project includes a comprehensive end-to-end CI/CD pipeline using GitHub Actions with the following workflows:
 
-1. **Lint Job**: Code quality checks
-2. **Test Job**: Unit tests with coverage
-3. **Train Job**: Model training and artifact upload
-4. **Build Job**: Docker image build and test
+### Main CI/CD Workflow (`.github/workflows/ci-cd.yml`)
 
-Workflow triggers on:
-- Push to `main` or `develop` branches
-- Pull requests to `main` branch
+The pipeline consists of 7 jobs that run in parallel and sequence:
+
+1. **Code Quality Checks** (`code-quality`)
+   - Black code formatting check
+   - isort import sorting check
+   - Flake8 linting with complexity checks
+   - Runs on every push and PR
+
+2. **Unit Tests** (`unit-tests`)
+   - Pytest with coverage reporting
+   - Codecov integration for coverage tracking
+   - HTML coverage report generation
+   - Uploads coverage artifacts
+
+3. **Data Validation** (`data-validation`)
+   - Downloads dataset automatically
+   - Validates dataset structure and completeness
+   - Checks for missing values
+   - Ensures data quality before training
+
+4. **Model Training** (`model-training`)
+   - Runs after code quality, tests, and data validation pass
+   - Trains both Logistic Regression and Random Forest models
+   - MLflow experiment tracking
+   - Validates model artifacts
+   - Uploads training artifacts and logs
+
+5. **Docker Build and Test** (`docker-build-test`)
+   - Builds Docker image with trained models
+   - Tests container health endpoint
+   - Tests prediction endpoint with sample data
+   - Validates container functionality
+   - Saves and uploads Docker image artifact
+
+6. **End-to-End Pipeline Test** (`e2e-pipeline`)
+   - Runs complete pipeline script
+   - Validates full workflow from data download to API serving
+   - Tests Docker container integration
+
+7. **Pipeline Summary** (`pipeline-summary`)
+   - Generates summary of all job results
+   - Provides status overview in GitHub Actions UI
+   - Fails if any critical job fails
+
+### Deployment Workflow (`.github/workflows/deploy.yml`)
+
+- Triggers automatically after successful CI/CD pipeline
+- Validates Kubernetes manifests
+- Validates Helm charts
+- Can be manually triggered for specific environments
+
+### Workflow Features
+
+- **Artifact Storage**: All artifacts (models, coverage reports, Docker images) are stored for 7-30 days
+- **Parallel Execution**: Independent jobs run in parallel for faster feedback
+- **Error Handling**: Proper error handling with clear failure messages
+- **Logging**: Comprehensive logging at each step
+- **Timeouts**: All jobs have timeout limits to prevent hanging
+- **Manual Triggers**: Workflows can be manually triggered via `workflow_dispatch`
+
+### Workflow Triggers
+
+- Push to `main`, `master`, or `develop` branches
+- Pull requests to `main`, `master`, or `develop` branches
+- Manual trigger via GitHub Actions UI
+
+### Viewing Pipeline Results
+
+1. Go to the **Actions** tab in your GitHub repository
+2. Click on the latest workflow run
+3. View individual job logs and artifacts
+4. Check the pipeline summary for overall status
+
+### Artifacts
+
+The pipeline generates and stores:
+- **Coverage Reports**: HTML coverage reports from pytest
+- **Model Artifacts**: Trained models, preprocessors, and MLflow runs
+- **Training Logs**: Log files from model training
+- **Docker Images**: Built and tested Docker container images
+- **Pipeline Logs**: Complete pipeline execution logs
 
 ## API Documentation
 
