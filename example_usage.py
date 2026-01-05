@@ -26,8 +26,8 @@ def main():
     print("   Results are tracked in MLflow")
     
     print("\n4. View MLflow UI")
-    print("   Command: mlflow ui")
-    print("   Open http://localhost:5000 to view experiments")
+    print("   Command: mlflow ui --port 10800 --backend-store-uri file://./mlruns")
+    print("   Open http://localhost:10800 to view experiments")
     
     print("\n5. Make Predictions (Standalone)")
     print("   Command: python src/predict.py")

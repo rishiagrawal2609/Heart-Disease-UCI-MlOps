@@ -13,7 +13,7 @@ from typing import List
 import mlflow.sklearn
 import numpy as np
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 # Add src to path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -61,8 +61,8 @@ class HeartDiseaseInput(BaseModel):
     )
     thal: int = Field(..., ge=0, le=3, description="Thalassemia")
 
-    class Config:
-        schema_extra = {
+    model_config = ConfigDict(
+        json_schema_extra={
             "example": {
                 "age": 63,
                 "sex": 1,
@@ -79,6 +79,7 @@ class HeartDiseaseInput(BaseModel):
                 "thal": 1,
             }
         }
+    )
 
 
 class PredictionResponse(BaseModel):

@@ -282,9 +282,19 @@ Models are evaluated using:
 - **ROC-AUC**: Area under the ROC curve
 
 Results are tracked in MLflow and can be viewed using:
+
+**Option 1: Using Docker Compose (Recommended)**
 ```bash
-mlflow ui
+cd docker
+docker-compose up mlflow
 ```
+Access MLflow UI at: http://localhost:10800
+
+**Option 2: Run locally**
+```bash
+mlflow ui --port 10800 --backend-store-uri file://./mlruns
+```
+Access MLflow UI at: http://localhost:10800
 
 ## Monitoring
 

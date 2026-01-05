@@ -47,6 +47,16 @@ services:
     depends_on:
       - prometheus
 
+  mlflow:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.mlflow
+    ports:
+      - "10800:10800"
+    volumes:
+      - ../mlruns:/app/mlruns
+    restart: unless-stopped
+
 volumes:
   prometheus_data:
   grafana_data:
