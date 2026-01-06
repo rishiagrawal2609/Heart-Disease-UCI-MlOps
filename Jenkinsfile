@@ -30,6 +30,7 @@ pipeline {
                     script {
                         echo "Setting up Python environment..."
                         sh '''
+                            #!/bin/bash
                             python3 --version
                             python3 -m venv venv || true
                             source venv/bin/activate || . venv/bin/activate

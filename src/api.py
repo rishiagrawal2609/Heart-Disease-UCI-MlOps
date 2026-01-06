@@ -19,20 +19,29 @@ try:
 except ImportError:
     # If import fails, define warnings filters inline
     import warnings
+
     warnings.filterwarnings("ignore", category=UserWarning, module="urllib3")
     warnings.filterwarnings("ignore", message=".*NotOpenSSLWarning.*")
     warnings.filterwarnings("ignore", message=".*PydanticDeprecatedSince20.*")
     warnings.filterwarnings("ignore", message=".*Pydantic V1 style.*")
     warnings.filterwarnings("ignore", message=".*Support for class-based `config`.*")
     warnings.filterwarnings("ignore", message=".*Valid config keys have changed.*")
-    warnings.filterwarnings("ignore", message=".*Field.*has conflict with protected namespace.*")
+    warnings.filterwarnings(
+        "ignore", message=".*Field.*has conflict with protected namespace.*"
+    )
 
 # Now import mlflow and other packages (warnings are already suppressed)
 import mlflow.sklearn
 import numpy as np
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import Response
-from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST, REGISTRY
+from prometheus_client import (
+    Counter,
+    Histogram,
+    generate_latest,
+    CONTENT_TYPE_LATEST,
+    REGISTRY,
+)
 from pydantic import BaseModel, ConfigDict, Field
 
 from data_preprocessing import HeartDiseasePreprocessor
@@ -58,19 +67,15 @@ preprocessor = None
 
 # Prometheus metrics
 REQUEST_COUNT = Counter(
-    'http_requests_total',
-    'Total HTTP requests',
-    ['method', 'endpoint', 'status']
+    "http_requests_total", "Total HTTP requests", ["method", "endpoint", "status"]
 )
 PREDICTION_COUNT = Counter(
-    'predictions_total',
-    'Total predictions made',
-    ['prediction']
+    "predictions_total", "Total predictions made", ["prediction"]
 )
 PREDICTION_DURATION = Histogram(
-    'prediction_duration_seconds',
-    'Time spent processing predictions',
-    buckets=[0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0]
+    "prediction_duration_seconds",
+    "Time spent processing predictions",
+    buckets=[0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0],
 )
 
 
@@ -208,7 +213,7 @@ async def startup_event():
 @app.get("/")
 async def root():
     """Health check endpoint"""
-    REQUEST_COUNT.labels(method='GET', endpoint='/', status='200').inc()
+    REQUEST_COUNT.labels(method="GET", endpoint="/", status="200").inc()
     return {
         "status": "healthy",
         "service": "Heart Disease Prediction API",
@@ -219,7 +224,7 @@ async def root():
 @app.get("/health")
 async def health():
     """Health check endpoint"""
-    REQUEST_COUNT.labels(method='GET', endpoint='/health', status='200').inc()
+    REQUEST_COUNT.labels(method="GET", endpoint="/health", status="200").inc()
     return {
         "status": "healthy",
         "model_loaded": model is not None,
@@ -235,10 +240,13 @@ async def predict(input_data: HeartDiseaseInput):
     Returns prediction (0 or 1) and confidence probability
     """
     import time
+
     start_time = time.time()
-    
+
     try:
-        REQUEST_COUNT.labels(method='POST', endpoint='/predict', status='processing').inc()
+        REQUEST_COUNT.labels(
+            method="POST", endpoint="/predict", status="processing"
+        ).inc()
         # Log request
         logger.info(f"Prediction request received: {input_data.model_dump()}")
 
@@ -299,20 +307,20 @@ async def predict(input_data: HeartDiseaseInput):
         duration = time.time() - start_time
         PREDICTION_DURATION.observe(duration)
         PREDICTION_COUNT.labels(prediction=str(prediction)).inc()
-        REQUEST_COUNT.labels(method='POST', endpoint='/predict', status='200').inc()
+        REQUEST_COUNT.labels(method="POST", endpoint="/predict", status="200").inc()
 
         return response
 
     except Exception as e:
         logger.error(f"Prediction error: {e}", exc_info=True)
-        REQUEST_COUNT.labels(method='POST', endpoint='/predict', status='500').inc()
+        REQUEST_COUNT.labels(method="POST", endpoint="/predict", status="500").inc()
         raise HTTPException(status_code=500, detail=f"Prediction failed: {str(e)}")
 
 
 @app.get("/metrics")
 async def metrics():
     """Prometheus-compatible metrics endpoint"""
-    REQUEST_COUNT.labels(method='GET', endpoint='/metrics', status='200').inc()
+    REQUEST_COUNT.labels(method="GET", endpoint="/metrics", status="200").inc()
     return Response(content=generate_latest(REGISTRY), media_type=CONTENT_TYPE_LATEST)
 
 

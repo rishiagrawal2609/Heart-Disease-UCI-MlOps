@@ -16,13 +16,16 @@ try:
 except ImportError:
     # If import fails, define warnings filters inline
     import warnings
+
     warnings.filterwarnings("ignore", category=UserWarning, module="urllib3")
     warnings.filterwarnings("ignore", message=".*NotOpenSSLWarning.*")
     warnings.filterwarnings("ignore", message=".*PydanticDeprecatedSince20.*")
     warnings.filterwarnings("ignore", message=".*Pydantic V1 style.*")
     warnings.filterwarnings("ignore", message=".*Support for class-based `config`.*")
     warnings.filterwarnings("ignore", message=".*Valid config keys have changed.*")
-    warnings.filterwarnings("ignore", message=".*Field.*has conflict with protected namespace.*")
+    warnings.filterwarnings(
+        "ignore", message=".*Field.*has conflict with protected namespace.*"
+    )
 
 # Now import mlflow and other packages (warnings are already suppressed)
 import mlflow.sklearn

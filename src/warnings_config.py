@@ -16,10 +16,11 @@ warnings.filterwarnings("ignore", message=".*PydanticDeprecatedSince20.*")
 warnings.filterwarnings("ignore", message=".*Pydantic V1 style.*")
 warnings.filterwarnings("ignore", message=".*Support for class-based `config`.*")
 warnings.filterwarnings("ignore", message=".*Valid config keys have changed.*")
-warnings.filterwarnings("ignore", message=".*Field.*has conflict with protected namespace.*")
+warnings.filterwarnings(
+    "ignore", message=".*Field.*has conflict with protected namespace.*"
+)
 
 # Suppress Pydantic validator deprecation warnings
 warnings.filterwarnings("ignore", message=".*@validator.*is deprecated.*")
 warnings.filterwarnings("ignore", message=".*@root_validator.*is deprecated.*")
 warnings.filterwarnings("ignore", message=".*migrate to Pydantic V2.*")
-
