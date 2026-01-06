@@ -1,0 +1,15 @@
+artifact_uri: file:///Users/rishi/workspace/bits/MLOPS/assignment-1/mlruns/359473545922451294/e52cc02ccf4f4721b8124e1cde415c19/artifacts
+end_time: 1767634762781
+entry_point_name: ''
+experiment_id: '359473545922451294'
+lifecycle_stage: active
+run_id: e52cc02ccf4f4721b8124e1cde415c19
+run_name: Logistic_Regression
+run_uuid: e52cc02ccf4f4721b8124e1cde415c19
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1767634760733
+status: 3
+tags: []
+user_id: rishi

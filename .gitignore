@@ -31,7 +31,7 @@ ENV/
 *.ipynb_checkpoints
 
 # MLflow
-mlruns/
+
 mlartifacts/
 
 # Data
@@ -71,8 +71,6 @@ htmlcov/
 .dockerignore
 
 # Screenshots (keep directory, ignore large files)
-screenshots/*.png
-screenshots/*.jpg
 !screenshots/.gitkeep
 
 # Environment variables

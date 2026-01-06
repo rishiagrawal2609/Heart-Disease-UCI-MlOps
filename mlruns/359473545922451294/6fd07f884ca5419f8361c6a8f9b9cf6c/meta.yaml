@@ -1,0 +1,15 @@
+artifact_uri: file:///Users/rishi/workspace/bits/MLOPS/assignment-1/mlruns/359473545922451294/6fd07f884ca5419f8361c6a8f9b9cf6c/artifacts
+end_time: 1767635378794
+entry_point_name: ''
+experiment_id: '359473545922451294'
+lifecycle_stage: active
+run_id: 6fd07f884ca5419f8361c6a8f9b9cf6c
+run_name: Random_Forest
+run_uuid: 6fd07f884ca5419f8361c6a8f9b9cf6c
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1767635376629
+status: 3
+tags: []
+user_id: rishi

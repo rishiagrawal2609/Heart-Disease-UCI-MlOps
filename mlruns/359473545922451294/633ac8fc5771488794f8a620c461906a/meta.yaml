@@ -1,0 +1,15 @@
+artifact_uri: file:///Users/rishi/workspace/bits/MLOPS/assignment-1/mlruns/359473545922451294/633ac8fc5771488794f8a620c461906a/artifacts
+end_time: 1767635605744
+entry_point_name: ''
+experiment_id: '359473545922451294'
+lifecycle_stage: active
+run_id: 633ac8fc5771488794f8a620c461906a
+run_name: Best_Model
+run_uuid: 633ac8fc5771488794f8a620c461906a
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1767635604337
+status: 3
+tags: []
+user_id: rishi

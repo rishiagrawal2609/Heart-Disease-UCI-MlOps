@@ -1,0 +1,6 @@
+artifact_location: file:///Users/rishi/workspace/bits/MLOPS/assignment-1/mlruns/359473545922451294
+creation_time: 1767634169351
+experiment_id: '359473545922451294'
+last_update_time: 1767634169351
+lifecycle_stage: active
+name: heart_disease_prediction
