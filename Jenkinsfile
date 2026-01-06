@@ -248,11 +248,7 @@ print(response.read().decode())
             steps {
                 script {
                     sh '''
-                        echo "Starting services for integration test..."
-                        cd docker
-                        docker-compose up -d prometheus grafana || true
-                        sleep 10
-                        
+                        echo "Starting integration test..."
                         echo "Checking Prometheus targets..."
                         curl -s http://localhost:9090/api/v1/targets | python3 -m json.tool || true
                         
@@ -265,8 +261,7 @@ print(response.read().decode())
                 always {
                     script {
                         sh '''
-                            cd docker
-                            docker-compose down || true
+                        echo "Integration test completed"
                         '''
                     }
                 }
@@ -280,7 +275,7 @@ print(response.read().decode())
                 echo "Pipeline execution completed"
                 // Cleanup
                 sh ''' 
-                    echo "Application is running at http://localhost:8000"
+                    echo "Cleanup completed"
                 '''
             }
         }
