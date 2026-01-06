@@ -236,8 +236,9 @@ print(response.read().decode())
             post {
                 always {
                     script {
-                        echo "Keeping test container running: test-api-${BUILD_NUMBER}"
-                        // Container is left running for inspection
+                        sh '''
+                            docker stop test-api-${BUILD_NUMBER} || true
+                        '''
                     }
                 }
             }
@@ -263,8 +264,10 @@ print(response.read().decode())
             post {
                 always {
                     script {
-                        echo "Keeping integration test services running (Prometheus, Grafana)"
-                        // Services are left running for inspection
+                        sh '''
+                            cd docker
+                            docker-compose down || true
+                        '''
                     }
                 }
             }
