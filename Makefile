@@ -57,7 +57,7 @@ docker-run:
 	docker run -p 8000:8000 heart-disease-api:latest
 
 mlflow:
-	mlflow ui --port 10800 --backend-store-uri file://./mlruns
+	mlflow ui --port 10800 --backend-store-uri ./mlruns
 
 prometheus:
 	cd docker && docker-compose up -d prometheus

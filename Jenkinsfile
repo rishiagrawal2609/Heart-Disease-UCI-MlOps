@@ -280,9 +280,7 @@ print(response.read().decode())
             script {
                 echo "Pipeline execution completed"
                 // Cleanup
-                sh '''
-                    docker ps -a | grep test-api | awk '{print $1}' | xargs -r docker rm -f || true
-                    docker images | grep ${DOCKER_IMAGE} | grep -v latest | awk '{print $3}' | xargs -r 
+                sh ''' 
                     echo "Application is running at http://localhost:8000"
                 '''
             }
