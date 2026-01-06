@@ -36,11 +36,11 @@ import numpy as np
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import Response
 from prometheus_client import (
+    CONTENT_TYPE_LATEST,
+    REGISTRY,
     Counter,
     Histogram,
     generate_latest,
-    CONTENT_TYPE_LATEST,
-    REGISTRY,
 )
 from pydantic import BaseModel, ConfigDict, Field
 
