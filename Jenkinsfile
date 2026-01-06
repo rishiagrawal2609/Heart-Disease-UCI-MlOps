@@ -34,6 +34,7 @@ pipeline {
                             python3 -m venv venv || true
                             source venv/bin/activate || . venv/bin/activate
                             pip install --upgrade pip
+                            pip install setuptools wheel
                             pip install -r requirements.txt
                         '''
                     }
