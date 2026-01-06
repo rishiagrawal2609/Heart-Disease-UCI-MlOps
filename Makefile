@@ -1,4 +1,4 @@
-.PHONY: help install download-data eda train test lint format docker-build docker-run mlflow prometheus grafana docker-up docker-down clean pipeline pipeline-full
+.PHONY: help install download-data eda train test lint format docker-build docker-run mlflow prometheus grafana docker-up docker-down clean pipeline pipeline-full jenkins jenkins-up jenkins-down jenkins-logs jenkins-password
 
 help:
 	@echo "Available commands:"
@@ -17,6 +17,11 @@ help:
 	@echo "  make docker-up      - Start all services (API, Prometheus, Grafana, MLflow)"
 	@echo "  make docker-down    - Stop all services"
 	@echo "  make test-metrics   - Generate test traffic for Prometheus metrics"
+	@echo "  make jenkins        - Start Jenkins server on port 8080"
+	@echo "  make jenkins-up     - Start Jenkins server"
+	@echo "  make jenkins-down   - Stop Jenkins server"
+	@echo "  make jenkins-logs   - View Jenkins logs"
+	@echo "  make jenkins-password - Get Jenkins initial admin password"
 	@echo "  make pipeline       - Run complete end-to-end pipeline (data, EDA, train, test, docker)"
 	@echo "  make pipeline-full  - Run full pipeline with code quality checks"
 	@echo "  make clean          - Clean generated files"
@@ -71,6 +76,39 @@ docker-up:
 
 docker-down:
 	cd docker && docker-compose down
+
+jenkins:
+	@echo "Starting Jenkins server..."
+	cd docker && docker-compose -f docker-compose.jenkins.yml up -d
+	@sleep 5
+	@echo ""
+	@echo "=========================================="
+	@echo "Jenkins is starting..."
+	@echo "=========================================="
+	@echo "Access Jenkins at: http://localhost:8080"
+	@echo ""
+	@echo "To get the initial admin password, run:"
+	@echo "  make jenkins-password"
+	@echo ""
+	@echo "Or manually:"
+	@echo "  docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword"
+	@echo ""
+	@echo "Jenkins will be ready in about 1-2 minutes"
+
+jenkins-up: jenkins
+
+jenkins-down:
+	@echo "Stopping Jenkins server..."
+	cd docker && docker-compose -f docker-compose.jenkins.yml down
+	@echo "Jenkins stopped"
+
+jenkins-logs:
+	@echo "Viewing Jenkins logs (Ctrl+C to exit)..."
+	cd docker && docker-compose -f docker-compose.jenkins.yml logs -f jenkins
+
+jenkins-password:
+	@echo "Jenkins initial admin password:"
+	@docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword 2>/dev/null || echo "Jenkins container not running. Start it with: make jenkins"
 
 test-metrics:
 	@echo "Generating traffic for Prometheus metrics..."

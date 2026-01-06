@@ -399,6 +399,39 @@ The pipeline generates and stores:
 - **Model Artifacts**: Trained models, preprocessors, and MLflow runs
 - **Training Logs**: Log files from model training
 - **Docker Images**: Built and tested Docker container images
+
+### Jenkins Pipeline
+
+The project also includes a Jenkins pipeline (`Jenkinsfile`) for CI/CD automation:
+
+**Pipeline Stages:**
+1. **Checkout** - Get code from repository
+2. **Setup Environment** - Create virtual environment and install dependencies
+3. **Code Quality** - Run linters and format checks (parallel execution)
+4. **Download Data** - Download heart disease dataset
+5. **Exploratory Data Analysis** - Run EDA and generate visualizations
+6. **Train Models** - Train Logistic Regression and Random Forest models
+7. **Run Tests** - Execute unit tests with coverage reporting
+8. **Build Docker Image** - Build Docker container
+9. **Test Docker Container** - Test API endpoints in container
+10. **Integration Test** - Test with Prometheus and Grafana
+
+**Features:**
+- Declarative pipeline syntax
+- Parallel execution for faster builds
+- Artifact archiving (EDA plots, models, coverage reports)
+- Docker container testing
+- Email notifications on success/failure
+- Automatic cleanup of test containers
+
+**Setup:**
+See `jenkins/README.md` for detailed setup instructions.
+
+**Quick Start:**
+1. Install required Jenkins plugins (Docker Pipeline, HTML Publisher, Cobertura, etc.)
+2. Create a new Pipeline job in Jenkins
+3. Configure to use `Jenkinsfile` from SCM
+4. Run the pipeline
 - **Pipeline Logs**: Complete pipeline execution logs
 
 ## API Documentation
