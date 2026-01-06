@@ -136,16 +136,7 @@ pipeline {
             post {
                 always {
                     archiveArtifacts artifacts: 'htmlcov/**/*', allowEmptyArchive: true
-                    script {
-                        // Try to publish coverage if plugin is available
-                        try {
-                            publishCoverage adapters: [
-                                coberturaAdapter('coverage.xml')
-                            ], sourceFileResolver: sourceFiles('STORE_LAST_BUILD')
-                        } catch (Exception e) {
-                            echo "Coverage plugin not available, skipping coverage publishing: ${e.message}"
-                        }
-                    }
+                    archiveArtifacts artifacts: 'coverage.xml', allowEmptyArchive: true
                 }
             }
         }
