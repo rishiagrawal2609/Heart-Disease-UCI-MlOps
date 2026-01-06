@@ -57,11 +57,7 @@ node {
                 source venv/bin/activate || . venv/bin/activate
                 pytest tests/ -v --cov=src --cov-report=html --cov-report=xml
             '''
-            publishHTML([
-                reportDir: 'htmlcov',
-                reportFiles: 'index.html',
-                reportName: 'Coverage Report'
-            ])
+            archiveArtifacts 'htmlcov/**/*'
         }
         
         stage('Build Docker') {
