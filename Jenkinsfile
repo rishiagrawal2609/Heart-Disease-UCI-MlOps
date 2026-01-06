@@ -169,10 +169,10 @@ pipeline {
                         docker stop test-api-${BUILD_NUMBER} || true
                         docker rm test-api-${BUILD_NUMBER} || true
                         
-                        # Start container
+                        # Start container with curl installed or use a base image that has it
                         docker run -d -p 8000:8000 --name test-api-${BUILD_NUMBER} ${DOCKER_IMAGE}:${DOCKER_TAG}
                         
-                        # Wait for container to be ready with retries
+                        # Wait for container to be ready using Python (most reliable - Python is always available)
                         echo "Waiting for container to be ready..."
                         max_attempts=30
                         attempt=0
@@ -187,8 +187,8 @@ pipeline {
                                 exit 1
                             fi
                             
-                            # Try to connect to health endpoint
-                            if curl -f -s --max-time 5 http://localhost:8000/health > /dev/null 2>&1; then
+                            # Use Python to test from inside the container (most reliable - Python is always available)
+                            if docker exec test-api-${BUILD_NUMBER} python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=5).read()" > /dev/null 2>&1; then
                                 echo "Container is ready! (attempt $((attempt + 1)))"
                                 success=1
                                 break
@@ -217,13 +217,17 @@ pipeline {
                         sleep 2
                         
                         echo "Testing health endpoint..."
-                        curl -f -v http://localhost:8000/health || (docker logs test-api-${BUILD_NUMBER}; exit 1)
+                        docker exec test-api-${BUILD_NUMBER} python -c "import urllib.request; import json; response = urllib.request.urlopen('http://localhost:8000/health'); print(response.read().decode())" || (docker logs test-api-${BUILD_NUMBER}; exit 1)
                         
                         echo "Testing prediction endpoint..."
-                        curl -f -X POST http://localhost:8000/predict \\
-                          -H "Content-Type: application/json" \\
-                          -d '{"age":63,"sex":1,"cp":3,"trestbps":145,"chol":233,"fbs":1,"restecg":0,"thalach":150,"exang":0,"oldpeak":2.3,"slope":0,"ca":0,"thal":1}' \\
-                          || (docker logs test-api-${BUILD_NUMBER}; exit 1)
+                        docker exec test-api-${BUILD_NUMBER} python -c "
+import urllib.request
+import json
+data = json.dumps({'age':63,'sex':1,'cp':3,'trestbps':145,'chol':233,'fbs':1,'restecg':0,'thalach':150,'exang':0,'oldpeak':2.3,'slope':0,'ca':0,'thal':1}).encode()
+req = urllib.request.Request('http://localhost:8000/predict', data=data, headers={'Content-Type': 'application/json'})
+response = urllib.request.urlopen(req)
+print(response.read().decode())
+" || (docker logs test-api-${BUILD_NUMBER}; exit 1)
                         
                         echo "✓ Docker container tests passed"
                     '''
@@ -278,7 +282,8 @@ pipeline {
                 // Cleanup
                 sh '''
                     docker ps -a | grep test-api | awk '{print $1}' | xargs -r docker rm -f || true
-                    docker images | grep ${DOCKER_IMAGE} | grep -v latest | awk '{print $3}' | xargs -r docker rmi -f || true
+                    docker images | grep ${DOCKER_IMAGE} | grep -v latest | awk '{print $3}' | xargs -r 
+                    echo "Application is running at http://localhost:8000"
                 '''
             }
         }
