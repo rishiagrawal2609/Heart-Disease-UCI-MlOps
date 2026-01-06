@@ -290,7 +290,7 @@ print(response.read().decode())
                 emailext(
                     subject: "✓ Pipeline Success: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                     body: "Pipeline completed successfully.\n\nBuild: ${env.BUILD_URL}",
-                    to: "${env.CHANGE_AUTHOR_EMAIL}"
+                    to: "rishiagrawal2609@gmail.com"
                 )
             }
         }
@@ -300,7 +300,7 @@ print(response.read().decode())
                 emailext(
                     subject: "✗ Pipeline Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                     body: "Pipeline failed. Check the build logs: ${env.BUILD_URL}",
-                    to: "${env.CHANGE_AUTHOR_EMAIL}"
+                    to: "rishiagrawal2609@gmail.com"
                 )
             }
         }
