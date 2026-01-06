@@ -91,8 +91,14 @@ assignment-1/
    python src/download_data.py
    ```
 
-5. **Run EDA notebook** (optional)
+5. **Run EDA** (optional)
    ```bash
+   # Option 1: Run as Python script (recommended)
+   python src/eda.py
+   # or
+   make eda
+   
+   # Option 2: Run Jupyter notebook
    jupyter notebook notebooks/01_eda.ipynb
    ```
 

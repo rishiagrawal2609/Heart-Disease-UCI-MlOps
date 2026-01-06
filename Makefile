@@ -1,9 +1,10 @@
-.PHONY: help install download-data train test lint format docker-build docker-run mlflow prometheus grafana docker-up docker-down clean
+.PHONY: help install download-data eda train test lint format docker-build docker-run mlflow prometheus grafana docker-up docker-down clean pipeline pipeline-full
 
 help:
 	@echo "Available commands:"
 	@echo "  make install        - Install dependencies"
 	@echo "  make download-data  - Download dataset"
+	@echo "  make eda            - Run Exploratory Data Analysis"
 	@echo "  make train          - Train models"
 	@echo "  make test           - Run tests"
 	@echo "  make lint           - Run linters"
@@ -15,6 +16,9 @@ help:
 	@echo "  make grafana        - Start Grafana on port 3000"
 	@echo "  make docker-up      - Start all services (API, Prometheus, Grafana, MLflow)"
 	@echo "  make docker-down    - Stop all services"
+	@echo "  make test-metrics   - Generate test traffic for Prometheus metrics"
+	@echo "  make pipeline       - Run complete end-to-end pipeline (data, EDA, train, test, docker)"
+	@echo "  make pipeline-full  - Run full pipeline with code quality checks"
 	@echo "  make clean          - Clean generated files"
 
 install:
@@ -22,6 +26,9 @@ install:
 
 download-data:
 	python src/download_data.py
+
+eda:
+	python src/eda.py
 
 train:
 	python src/train_model.py
@@ -64,6 +71,80 @@ docker-up:
 
 docker-down:
 	cd docker && docker-compose down
+
+test-metrics:
+	@echo "Generating traffic for Prometheus metrics..."
+	@for i in 1 2 3 4 5 6 7 8 9 10; do \
+		echo "Request $$i..."; \
+		curl -s http://localhost:8000/health > /dev/null; \
+		curl -s -X POST http://localhost:8000/predict \
+		  -H "Content-Type: application/json" \
+		  -d '{"age":63,"sex":1,"cp":3,"trestbps":145,"chol":233,"fbs":1,"restecg":0,"thalach":150,"exang":0,"oldpeak":2.3,"slope":0,"ca":0,"thal":1}' > /dev/null; \
+		sleep 1; \
+	done
+	@echo ""
+	@echo "✓ Generated 10 health checks and 10 predictions"
+	@echo "Wait 15-30 seconds, then check Prometheus: http://localhost:9090"
+	@echo ""
+	@echo "Try these queries:"
+	@echo "  - http_requests_total{job=\"heart-disease-api\"}"
+	@echo "  - predictions_total{job=\"heart-disease-api\"}"
+	@echo "  - rate(http_requests_total{job=\"heart-disease-api\"}[5m])"
+
+pipeline:
+	@echo "=========================================="
+	@echo "Heart Disease Prediction - End-to-End Pipeline"
+	@echo "=========================================="
+	@echo ""
+	@echo "Step 1/7: Downloading dataset..."
+	@$(MAKE) download-data
+	@echo ""
+	@echo "Step 2/7: Running Exploratory Data Analysis..."
+	@$(MAKE) eda || echo "Warning: EDA step failed, continuing..."
+	@echo ""
+	@echo "Step 3/7: Training models..."
+	@$(MAKE) train
+	@echo ""
+	@echo "Step 4/7: Running tests..."
+	@$(MAKE) test
+	@echo ""
+	@echo "Step 5/7: Building Docker image..."
+	@$(MAKE) docker-build
+	@echo ""
+	@echo "Step 6/7: Testing Docker container..."
+	@docker run -d -p 8000:8000 --name test-api heart-disease-api:latest || true
+	@sleep 10
+	@echo "Testing health endpoint..."
+	@curl -f http://localhost:8000/health && echo "✓ API is healthy" || (echo "✗ API health check failed"; docker logs test-api; docker stop test-api 2>/dev/null || true; docker rm test-api 2>/dev/null || true; exit 1)
+	@echo "Testing prediction endpoint..."
+	@curl -X POST http://localhost:8000/predict \
+	  -H "Content-Type: application/json" \
+	  -d '{"age":63,"sex":1,"cp":3,"trestbps":145,"chol":233,"fbs":1,"restecg":0,"thalach":150,"exang":0,"oldpeak":2.3,"slope":0,"ca":0,"thal":1}' \
+	  && echo "" && echo "✓ Prediction endpoint working"
+	@docker stop test-api 2>/dev/null || true
+	@docker rm test-api 2>/dev/null || true
+	@echo ""
+	@echo "Step 7/7: Starting all services..."
+	@$(MAKE) docker-up
+	@echo ""
+	@echo "=========================================="
+	@echo "✓ Pipeline completed successfully!"
+	@echo "=========================================="
+	@echo ""
+	@echo "All services are now running:"
+	@echo "  - API: http://localhost:8000"
+	@echo "  - API Docs: http://localhost:8000/docs"
+	@echo "  - Prometheus: http://localhost:9090"
+	@echo "  - Grafana: http://localhost:3000 (admin/admin)"
+	@echo "  - MLflow: http://localhost:10800"
+	@echo ""
+	@echo "To stop services: make docker-down"
+
+pipeline-full: format lint pipeline
+	@echo ""
+	@echo "=========================================="
+	@echo "✓ Full pipeline with code quality checks completed!"
+	@echo "=========================================="
 
 clean:
 	find . -type d -name __pycache__ -exec rm -r {} +

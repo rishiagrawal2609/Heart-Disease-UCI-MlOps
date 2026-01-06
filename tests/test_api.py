@@ -98,8 +98,13 @@ def test_predict_endpoint_invalid_input():
 
 
 def test_metrics_endpoint():
-    """Test metrics endpoint"""
+    """Test metrics endpoint returns Prometheus-formatted metrics"""
     response = client.get("/metrics")
     assert response.status_code == 200
-    data = response.json()
-    assert "model_version" in data
+    # Metrics endpoint returns Prometheus text format, not JSON
+    content_type = response.headers.get("content-type", "")
+    assert content_type.startswith("text/plain")
+    assert "version=0.0.4" in content_type or "charset=utf-8" in content_type
+    text = response.text
+    # Check for Prometheus metric format
+    assert "# HELP" in text or "# TYPE" in text or "http_requests_total" in text
