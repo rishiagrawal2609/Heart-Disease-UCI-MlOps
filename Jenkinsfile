@@ -11,7 +11,6 @@ pipeline {
     options {
         timeout(time: 60, unit: 'MINUTES')
         timestamps()
-        ansiColor('xterm')
         buildDiscarder(logRotator(numToKeepStr: '10'))
     }
     
@@ -27,15 +26,17 @@ pipeline {
         
         stage('Setup Environment') {
             steps {
-                script {
-                    echo "Setting up Python environment..."
-                    sh '''
-                        python3 --version
-                        python3 -m venv venv || true
-                        source venv/bin/activate || . venv/bin/activate
-                        pip install --upgrade pip
-                        pip install -r requirements.txt
-                    '''
+                ansiColor('xterm') {
+                    script {
+                        echo "Setting up Python environment..."
+                        sh '''
+                            python3 --version
+                            python3 -m venv venv || true
+                            source venv/bin/activate || . venv/bin/activate
+                            pip install --upgrade pip
+                            pip install -r requirements.txt
+                        '''
+                    }
                 }
             }
         }

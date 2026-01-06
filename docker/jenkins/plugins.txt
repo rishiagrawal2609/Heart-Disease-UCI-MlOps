@@ -15,4 +15,17 @@ credentials-binding
 ssh-slaves
 matrix-auth
 role-strategy
+pipeline-github-lib
+pipeline-graph-analysis
+pipeline-input-step
+pipeline-milestone-step
+pipeline-model-api
+pipeline-model-definition
+pipeline-model-extensions
+pipeline-rest-api
+pipeline-stage-tags-metadata
+pipeline-utility-steps
+script-security
+structs
+scm-api
 

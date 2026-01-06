@@ -13,6 +13,7 @@ RUN apt-get update && \
     curl \
     wget \
     git \
+    unzip \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Docker Compose
@@ -27,5 +28,6 @@ COPY docker/jenkins/plugins.txt /usr/share/jenkins/ref/plugins.txt
 
 USER jenkins
 
-# Plugins will be installed automatically on first startup from plugins.txt
+# Plugins will be automatically installed on first Jenkins startup
+# The plugins.txt file in /usr/share/jenkins/ref/ is automatically processed by Jenkins
 

@@ -22,6 +22,7 @@ help:
 	@echo "  make jenkins-down   - Stop Jenkins server"
 	@echo "  make jenkins-logs   - View Jenkins logs"
 	@echo "  make jenkins-password - Get Jenkins initial admin password"
+	@echo "  make jenkins-plugins - Check installed Jenkins plugins"
 	@echo "  make pipeline       - Run complete end-to-end pipeline (data, EDA, train, test, docker)"
 	@echo "  make pipeline-full  - Run full pipeline with code quality checks"
 	@echo "  make clean          - Clean generated files"
@@ -109,6 +110,13 @@ jenkins-logs:
 jenkins-password:
 	@echo "Jenkins initial admin password:"
 	@docker exec jenkins cat /var/jenkins_home/secrets/initialAdminPassword 2>/dev/null || echo "Jenkins container not running. Start it with: make jenkins"
+
+jenkins-plugins:
+	@echo "Checking installed Jenkins plugins..."
+	@docker exec jenkins ls /var/jenkins_home/plugins/ 2>/dev/null | wc -l | xargs echo "Total plugins installed:" || echo "Jenkins container not running"
+	@echo ""
+	@echo "To see all plugins, run:"
+	@echo "  docker exec jenkins ls /var/jenkins_home/plugins/"
 
 test-metrics:
 	@echo "Generating traffic for Prometheus metrics..."

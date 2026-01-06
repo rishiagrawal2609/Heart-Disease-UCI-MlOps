@@ -19,10 +19,32 @@ make jenkins-password
 make jenkins-logs
 ```
 
+**Check installed plugins:**
+```bash
+make jenkins-plugins
+```
+
 **Stop Jenkins:**
 ```bash
 make jenkins-down
 ```
+
+## Plugin Installation
+
+All required plugins are automatically installed on first startup from `plugins.txt`. The plugins include:
+
+- **Pipeline plugins**: workflow-aggregator, pipeline-stage-view, blueocean
+- **Docker plugins**: docker-workflow, docker-plugin
+- **Code quality**: htmlpublisher, cobertura
+- **Notifications**: email-ext
+- **UI enhancements**: ansicolor, timestamper
+- **Git integration**: git, github, github-branch-source
+- **Security**: credentials-binding, matrix-auth, role-strategy
+- **Pipeline utilities**: All pipeline-* plugins
+
+Plugins are installed automatically when Jenkins starts for the first time. You can verify installation by:
+1. Going to **Manage Jenkins** → **Manage Plugins** → **Installed**
+2. Running `make jenkins-plugins` to see plugin count
 
 ## Access Jenkins
 
