@@ -165,14 +165,62 @@ pipeline {
                 script {
                     sh '''
                         echo "Testing Docker container..."
+                        # Clean up any existing container with the same name
+                        docker stop test-api-${BUILD_NUMBER} || true
+                        docker rm test-api-${BUILD_NUMBER} || true
+                        
+                        # Start container
                         docker run -d -p 8000:8000 --name test-api-${BUILD_NUMBER} ${DOCKER_IMAGE}:${DOCKER_TAG}
-                        sleep 15
+                        
+                        # Wait for container to be ready with retries
+                        echo "Waiting for container to be ready..."
+                        max_attempts=30
+                        attempt=0
+                        success=0
+                        
+                        while [ $attempt -lt $max_attempts ]; do
+                            # Check if container is running
+                            if ! docker ps | grep -q test-api-${BUILD_NUMBER}; then
+                                echo "Container is not running!"
+                                docker ps -a | grep test-api-${BUILD_NUMBER}
+                                docker logs test-api-${BUILD_NUMBER}
+                                exit 1
+                            fi
+                            
+                            # Try to connect to health endpoint
+                            if curl -f -s --max-time 5 http://localhost:8000/health > /dev/null 2>&1; then
+                                echo "Container is ready! (attempt $((attempt + 1)))"
+                                success=1
+                                break
+                            fi
+                            
+                            attempt=$((attempt + 1))
+                            if [ $((attempt % 5)) -eq 0 ]; then
+                                echo "Attempt $attempt/$max_attempts - still waiting..."
+                                docker logs --tail 10 test-api-${BUILD_NUMBER}
+                            fi
+                            sleep 2
+                        done
+                        
+                        if [ $success -eq 0 ]; then
+                            echo "Container failed to become ready after $max_attempts attempts"
+                            echo "Container status:"
+                            docker ps -a | grep test-api-${BUILD_NUMBER}
+                            echo "Container logs:"
+                            docker logs test-api-${BUILD_NUMBER}
+                            echo "Port binding check:"
+                            docker port test-api-${BUILD_NUMBER}
+                            exit 1
+                        fi
+                        
+                        # Give it a moment to fully stabilize
+                        sleep 2
                         
                         echo "Testing health endpoint..."
-                        curl -f http://localhost:8000/health || (docker logs test-api-${BUILD_NUMBER}; exit 1)
+                        curl -f -v http://localhost:8000/health || (docker logs test-api-${BUILD_NUMBER}; exit 1)
                         
                         echo "Testing prediction endpoint..."
-                        curl -X POST http://localhost:8000/predict \\
+                        curl -f -X POST http://localhost:8000/predict \\
                           -H "Content-Type: application/json" \\
                           -d '{"age":63,"sex":1,"cp":3,"trestbps":145,"chol":233,"fbs":1,"restecg":0,"thalach":150,"exang":0,"oldpeak":2.3,"slope":0,"ca":0,"thal":1}' \\
                           || (docker logs test-api-${BUILD_NUMBER}; exit 1)
